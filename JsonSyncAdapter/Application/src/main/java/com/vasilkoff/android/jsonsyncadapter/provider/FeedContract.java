@@ -52,6 +52,9 @@ public class FeedContract {
          * Table name where records are stored for "entry" resources.
          */
         public static final String TABLE_NAME = "entry";
+
+
+
         /**
          * Atom ID. (Note: Not to be confused with the database primary key, which is _ID.
          */

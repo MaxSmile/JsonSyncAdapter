@@ -40,7 +40,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.vasilkoff.android.common.accounts.GenericAccountService;
+import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
 
 /**
@@ -333,7 +333,7 @@ public class EntryListFragment extends ListFragment
                     // Create a handle to the account that was created by
                     // SyncService.CreateSyncAccount(). This will be used to query the system to
                     // see how the sync status has changed.
-                    Account account = GenericAccountService.GetAccount(getActivity().getString(R.string.ACCOUNT_TYPE));
+                    Account account = AccountService.GetAccount(getActivity().getString(R.string.ACCOUNT_TYPE));
                     if (account == null) {
                         // GetAccount() returned an invalid value. This shouldn't happen, but
                         // we'll set the status to "not refreshing".

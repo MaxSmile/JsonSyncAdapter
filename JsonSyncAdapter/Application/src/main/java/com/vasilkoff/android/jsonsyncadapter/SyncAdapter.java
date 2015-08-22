@@ -32,20 +32,22 @@ import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.vasilkoff.android.jsonsyncadapter.net.FeedParser;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+import com.vasilkoff.android.jsonsyncadapter.db.Entry;
 import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
 
-import org.xmlpull.v1.XmlPullParserException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Define a sync adapter for the app.
@@ -61,11 +63,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     /**
      * URL to fetch content from during a sync.
-     *
-     * <p>This points to the Android Developers Blog. (Side note: We highly recommend reading the
-     * Android Developer Blog to stay up to date on the latest Android platform developments!)
      */
-    private static final String FEED_URL = "http://android-developers.blogspot.com/atom.xml";
+    private static final String FEED_URL = "http://qviky.com:8080/videos?login=vasilkoff&ccode=0000&page=0";
 
     /**
      * Network connection timeout, in milliseconds.
@@ -133,49 +132,21 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      */
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority,
-                              ContentProviderClient provider, SyncResult syncResult) {
+                              ContentProviderClient provider, final SyncResult syncResult) {
         Log.i(TAG, "Beginning network synchronization");
-        try {
-            final URL location = new URL(FEED_URL);
-            InputStream stream = null;
-
-            try {
-                Log.i(TAG, "Streaming data from network: " + location);
-                stream = downloadUrl(location);
-                updateLocalFeedData(stream, syncResult);
-                // Makes sure that the InputStream is closed after the app is
-                // finished using it.
-            } finally {
-                if (stream != null) {
-                    stream.close();
+        AQuery aq = new AQuery(getContext());
+        aq.ajax(FEED_URL, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                try {
+                    updateLocalFeedData(json,syncResult);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
-        } catch (MalformedURLException e) {
-            Log.e(TAG, "Feed URL is malformed", e);
-            syncResult.stats.numParseExceptions++;
-            return;
-        } catch (IOException e) {
-            Log.e(TAG, "Error reading from network: " + e.toString());
-            syncResult.stats.numIoExceptions++;
-            return;
-        } catch (XmlPullParserException e) {
-            Log.e(TAG, "Error parsing feed: " + e.toString());
-            syncResult.stats.numParseExceptions++;
-            return;
-        } catch (ParseException e) {
-            Log.e(TAG, "Error parsing feed: " + e.toString());
-            syncResult.stats.numParseExceptions++;
-            return;
-        } catch (RemoteException e) {
-            Log.e(TAG, "Error updating database: " + e.toString());
-            syncResult.databaseError = true;
-            return;
-        } catch (OperationApplicationException e) {
-            Log.e(TAG, "Error updating database: " + e.toString());
-            syncResult.databaseError = true;
-            return;
-        }
-        Log.i(TAG, "Network synchronization complete");
+
+        });
+
     }
 
     /**
@@ -198,23 +169,22 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
      * (At this point, incoming database only contains missing items.)<br/>
      * 3. For any items remaining in incoming list, ADD to database.
      */
-    public void updateLocalFeedData(final InputStream stream, final SyncResult syncResult)
-            throws IOException, XmlPullParserException, RemoteException,
-            OperationApplicationException, ParseException {
-        final FeedParser feedParser = new FeedParser();
+    public void updateLocalFeedData(JSONObject data, final SyncResult syncResult) throws JSONException, RemoteException, OperationApplicationException {
+
         final ContentResolver contentResolver = getContext().getContentResolver();
 
-        Log.i(TAG, "Parsing stream as Atom feed");
-        final List<FeedParser.Entry> entries = feedParser.parse(stream);
-        Log.i(TAG, "Parsing complete. Found " + entries.size() + " entries");
+        JSONArray entries = data.getJSONArray("data");
+        Log.i(TAG, "Parsing complete. Found " + entries.length() + " entries");
 
 
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
         // Build hash table of incoming entries
-        HashMap<String, FeedParser.Entry> entryMap = new HashMap<String, FeedParser.Entry>();
-        for (FeedParser.Entry e : entries) {
-            entryMap.put(e.id, e);
+        HashMap<String, Entry> entryMap = new HashMap<String, Entry>();
+        for (int i = 0; i < entries.length(); i++) {
+            JSONObject e = entries.getJSONObject(i);
+            Entry de = new Entry(e.getString("id"),e.getString("created"),e.getString("video"),0);
+            entryMap.put(de.id, de);
         }
 
         // Get list of all items
@@ -237,7 +207,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             title = c.getString(COLUMN_TITLE);
             link = c.getString(COLUMN_LINK);
             published = c.getLong(COLUMN_PUBLISHED);
-            FeedParser.Entry match = entryMap.get(entryId);
+            Entry match = entryMap.get(entryId);
             if (match != null) {
                 // Entry exists. Remove from entry map to prevent insert later.
                 entryMap.remove(entryId);
@@ -270,7 +240,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         c.close();
 
         // Add new items
-        for (FeedParser.Entry e : entryMap.values()) {
+        for (Entry e : entryMap.values()) {
             Log.i(TAG, "Scheduling insert: entry_id=" + e.id);
             batch.add(ContentProviderOperation.newInsert(FeedContract.Entry.CONTENT_URI)
                     .withValue(FeedContract.Entry.COLUMN_NAME_ENTRY_ID, e.id)

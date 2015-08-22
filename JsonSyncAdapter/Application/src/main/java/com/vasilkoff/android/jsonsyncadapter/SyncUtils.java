@@ -25,14 +25,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
-import com.vasilkoff.android.common.accounts.GenericAccountService;
+import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
 
 /**
  * Static helper methods for working with the sync framework.
  */
 public class SyncUtils {
-    private static final long SYNC_FREQUENCY = 60 * 60;  // 1 hour (in seconds)
+    private static final long SYNC_FREQUENCY = 120;  // in seconds
     private static final String CONTENT_AUTHORITY = FeedContract.CONTENT_AUTHORITY;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
 
@@ -50,7 +50,7 @@ public class SyncUtils {
                 .getDefaultSharedPreferences(context).getBoolean(PREF_SETUP_COMPLETE, false);
 
         // Create account, if it's missing. (Either first run, or user has deleted account.)
-        Account account = GenericAccountService.GetAccount(context.getString(R.string.ACCOUNT_TYPE));
+        Account account = AccountService.GetAccount(context.getString(R.string.ACCOUNT_TYPE));
         AccountManager accountManager =
                 (AccountManager) context.getSystemService(Context.ACCOUNT_SERVICE);
         if (accountManager.addAccountExplicitly(account, null, null)) {
@@ -92,7 +92,7 @@ public class SyncUtils {
         b.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(
-                GenericAccountService.GetAccount(context.getString(R.string.ACCOUNT_TYPE)), // Sync account
+                AccountService.GetAccount(context.getString(R.string.ACCOUNT_TYPE)), // Sync account
                 FeedContract.CONTENT_AUTHORITY,                 // Content authority
                 b);                                             // Extras
     }

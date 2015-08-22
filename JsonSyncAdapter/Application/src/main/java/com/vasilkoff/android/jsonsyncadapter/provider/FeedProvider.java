@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.vasilkoff.android.jsonsyncadapter.provider;
 
 import android.content.ContentProvider;
@@ -22,12 +6,15 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 
-import com.vasilkoff.android.common.db.SelectionBuilder;
+import com.vasilkoff.android.jsonsyncadapter.db.SelectionBuilder;
 
+/**
+ * Created by maxim.vasilkov@gmail.com on 22/08/15.
+ */
 public class FeedProvider extends ContentProvider {
+
     FeedDatabase mDatabaseHelper;
 
     /**
@@ -204,49 +191,5 @@ public class FeedProvider extends ContentProvider {
         return count;
     }
 
-    /**
-     * SQLite backend for @{link FeedProvider}.
-     *
-     * Provides access to an disk-backed, SQLite datastore which is utilized by FeedProvider. This
-     * database should never be accessed by other parts of the application directly.
-     */
-    static class FeedDatabase extends SQLiteOpenHelper {
-        /** Schema version. */
-        public static final int DATABASE_VERSION = 1;
-        /** Filename for SQLite file. */
-        public static final String DATABASE_NAME = "feed.db";
 
-        private static final String TYPE_TEXT = " TEXT";
-        private static final String TYPE_INTEGER = " INTEGER";
-        private static final String COMMA_SEP = ",";
-        /** SQL statement to create "entry" table. */
-        private static final String SQL_CREATE_ENTRIES =
-                "CREATE TABLE " + FeedContract.Entry.TABLE_NAME + " (" +
-                        FeedContract.Entry._ID + " INTEGER PRIMARY KEY," +
-                        FeedContract.Entry.COLUMN_NAME_ENTRY_ID + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_TITLE    + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_LINK + TYPE_TEXT + COMMA_SEP +
-                        FeedContract.Entry.COLUMN_NAME_PUBLISHED + TYPE_INTEGER + ")";
-
-        /** SQL statement to drop "entry" table. */
-        private static final String SQL_DELETE_ENTRIES =
-                "DROP TABLE IF EXISTS " + FeedContract.Entry.TABLE_NAME;
-
-        public FeedDatabase(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SQL_CREATE_ENTRIES);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            // This database is only a cache for online data, so its upgrade policy is
-            // to simply to discard the data and start over
-            db.execSQL(SQL_DELETE_ENTRIES);
-            onCreate(db);
-        }
-    }
 }
