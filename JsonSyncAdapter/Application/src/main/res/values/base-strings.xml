@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">JsonSyncAdapter</string>
+    <string name="intro_message">Many things to learn</string>
+    <string name="CONTENT_AUTHORITY"></string>
+    <string name="ACCOUNT_TYPE">com.vasilkoff.android.jsonsyncadapter.account</string>
+</resources>
