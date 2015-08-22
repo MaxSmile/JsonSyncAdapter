@@ -4,4 +4,5 @@
     <string name="intro_message">Many things to learn</string>
 
     <string name="ACCOUNT_TYPE">com.vasilkoff.android.jsonsyncadapter.account</string>
+    <string name="CONTENT_AUTHORITY">com.vasilkoff.android.Sync</string>
 </resources>

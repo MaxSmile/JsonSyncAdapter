@@ -1,4 +1,4 @@
-package com.vasilkoff.android.jsonsyncadapter.provider;
+package com.vasilkoff.android.Sync.provider;
 
 import android.content.ContentResolver;
 import android.net.Uri;
@@ -6,16 +6,16 @@ import android.provider.BaseColumns;
 
 /**
  * Field and table name constants for
- * {@link com.vasilkoff.android.jsonsyncadapter.provider.FeedProvider}.
+ * {@link com.vasilkoff.android.Sync.provider.FeedProvider}.
  */
 public class FeedContract {
     private FeedContract() {
     }
 
     /**
-     * Content provider authority.
+     * Content provider authority. Kepp it the same with
      */
-    public static final String CONTENT_AUTHORITY = "com.vasilkoff.android.jsonsyncadapter";
+    public static final String CONTENT_AUTHORITY = "com.vasilkoff.android.Sync";
 
     /**
      * Base URI.

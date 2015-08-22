@@ -1,7 +1,10 @@
-package com.vasilkoff.android.jsonsyncadapter;
+package com.vasilkoff.android.UI;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import com.vasilkoff.android.R;
+
 
 /**
  * Activity for holding EntryListFragment.

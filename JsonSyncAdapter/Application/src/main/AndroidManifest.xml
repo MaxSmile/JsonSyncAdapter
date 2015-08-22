@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vasilkoff.android.jsonsyncadapter"
+    package="com.vasilkoff.android"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -25,7 +25,7 @@
 
         <!-- Main activity, responsible for showing a list of feed entries. -->
         <activity
-            android:name=".EntryListActivity"
+            android:name="com.vasilkoff.android.UI.EntryListActivity"
             android:label="@string/app_name" >
             <!-- This intent filter places this activity in the system's app launcher. -->
             <intent-filter>
@@ -43,13 +43,13 @@
         Since this ContentProvider is not exported, it will not be accessible outside of this app's
         package. -->
         <provider
-            android:name=".provider.FeedProvider"
-            android:authorities="com.vasilkoff.android.jsonsyncadapter"
+            android:name="com.vasilkoff.android.Sync.provider.FeedProvider"
+            android:authorities="com.vasilkoff.android.Sync"
             android:exported="false" />
 
         <!-- This service implements our SyncAdapter. It needs to be exported, so that the system
         sync framework can access it. -->
-        <service android:name=".SyncService"
+        <service android:name="com.vasilkoff.android.Sync.SyncService"
             android:exported="true">
             <!-- This intent filter is required. It allows the system to launch our sync service
             as needed. -->

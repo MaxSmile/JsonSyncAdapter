@@ -1,4 +1,4 @@
-package com.vasilkoff.android.jsonsyncadapter.provider;
+package com.vasilkoff.android.Sync.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -8,7 +8,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.vasilkoff.android.jsonsyncadapter.db.SelectionBuilder;
+import com.vasilkoff.android.R;
+import com.vasilkoff.android.Sync.db.SelectionBuilder;
 
 /**
  * Created by maxim.vasilkov@gmail.com on 22/08/15.

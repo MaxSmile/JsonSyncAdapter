@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vasilkoff.android.jsonsyncadapter;
+package com.vasilkoff.android.Sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -26,7 +26,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 
 import com.vasilkoff.android.Account.AccountService;
-import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
+import com.vasilkoff.android.R;
+import com.vasilkoff.android.Sync.provider.FeedContract;
 
 /**
  * Static helper methods for working with the sync framework.

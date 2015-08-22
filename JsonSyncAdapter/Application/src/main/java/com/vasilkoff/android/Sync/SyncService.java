@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vasilkoff.android.jsonsyncadapter;
+package com.vasilkoff.android.Sync;
 
 import android.app.Service;
 import android.content.Intent;

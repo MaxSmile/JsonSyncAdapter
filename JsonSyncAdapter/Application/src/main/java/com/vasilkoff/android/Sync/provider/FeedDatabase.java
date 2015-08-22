@@ -1,4 +1,4 @@
-package com.vasilkoff.android.jsonsyncadapter.provider;
+package com.vasilkoff.android.Sync.provider;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

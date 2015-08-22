@@ -20,7 +20,7 @@
  * -Changed package name
  */
 
-package com.vasilkoff.android.jsonsyncadapter.db;
+package com.vasilkoff.android.Sync.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;

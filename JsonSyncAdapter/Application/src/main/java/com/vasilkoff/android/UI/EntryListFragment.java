@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package com.vasilkoff.android.jsonsyncadapter;
+package com.vasilkoff.android.UI;
 
 import android.accounts.Account;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
@@ -41,13 +43,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.vasilkoff.android.Account.AccountService;
-import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
+import com.vasilkoff.android.R;
+import com.vasilkoff.android.Sync.SyncService;
+import com.vasilkoff.android.Sync.SyncUtils;
+import com.vasilkoff.android.Sync.provider.FeedContract;
 
 /**
  * List fragment containing a list of Atom entry objects (articles) stored in the local database.
  *
  * <p>Database access is mediated by a content provider, specified in
- * {@link com.vasilkoff.android.jsonsyncadapter.provider.FeedProvider}. This content
+ * {@link com.vasilkoff.android.Sync.provider.FeedProvider}. This content
  * provider is
  * automatically populated by  {@link SyncService}.
  *
@@ -247,7 +252,7 @@ public class EntryListFragment extends ListFragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         mOptionsMenu = menu;
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R .menu.main, menu);
     }
 
     /**
@@ -284,11 +289,14 @@ public class EntryListFragment extends ListFragment
             return;
         }
 
-        Log.i(TAG, "Opening URL: " + articleUrlString);
-        // Get a Uri object for the URL string
-        Uri articleURL = Uri.parse(articleUrlString);
-        Intent i = new Intent(Intent.ACTION_VIEW, articleURL);
-        startActivity(i);
+        new AlertDialog.Builder(getContext())
+                .setTitle("Selected")
+                .setMessage(articleUrlString)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // continue with delete
+                    }
+                }).show();
     }
 
     /**

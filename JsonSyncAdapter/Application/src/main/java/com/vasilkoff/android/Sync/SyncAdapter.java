@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.vasilkoff.android.jsonsyncadapter;
+package com.vasilkoff.android.Sync;
 
 import android.accounts.Account;
 import android.annotation.TargetApi;
@@ -35,8 +35,8 @@ import android.util.Log;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.vasilkoff.android.jsonsyncadapter.db.Entry;
-import com.vasilkoff.android.jsonsyncadapter.provider.FeedContract;
+import com.vasilkoff.android.Sync.db.Video;
+import com.vasilkoff.android.Sync.provider.FeedContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -180,10 +180,10 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         ArrayList<ContentProviderOperation> batch = new ArrayList<ContentProviderOperation>();
 
         // Build hash table of incoming entries
-        HashMap<String, Entry> entryMap = new HashMap<String, Entry>();
+        HashMap<String, Video> entryMap = new HashMap<String, Video>();
         for (int i = 0; i < entries.length(); i++) {
             JSONObject e = entries.getJSONObject(i);
-            Entry de = new Entry(e.getString("id"),e.getString("created"),e.getString("video"),0);
+            Video de = new Video(e.getString("id"),e.getString("created"),e.getString("video"),0);
             entryMap.put(de.id, de);
         }
 
@@ -207,7 +207,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             title = c.getString(COLUMN_TITLE);
             link = c.getString(COLUMN_LINK);
             published = c.getLong(COLUMN_PUBLISHED);
-            Entry match = entryMap.get(entryId);
+            Video match = entryMap.get(entryId);
             if (match != null) {
                 // Entry exists. Remove from entry map to prevent insert later.
                 entryMap.remove(entryId);
@@ -240,7 +240,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         c.close();
 
         // Add new items
-        for (Entry e : entryMap.values()) {
+        for (Video e : entryMap.values()) {
             Log.i(TAG, "Scheduling insert: entry_id=" + e.id);
             batch.add(ContentProviderOperation.newInsert(FeedContract.Entry.CONTENT_URI)
                     .withValue(FeedContract.Entry.COLUMN_NAME_ENTRY_ID, e.id)
