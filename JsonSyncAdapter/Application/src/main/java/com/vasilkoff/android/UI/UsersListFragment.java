@@ -22,10 +22,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -46,13 +44,15 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.provider.FeedContract;
+import com.vasilkoff.android.Sync.model.VideoObject;
+import com.vasilkoff.android.Sync.provider.DataProvider;
+import com.vasilkoff.android.Sync.provider.DataContract;
 
 /**
  * List fragment containing a list of Atom entry objects (articles) stored in the local database.
  *
  * <p>Database access is mediated by a content provider, specified in
- * {@link com.vasilkoff.android.Sync.provider.FeedProvider}. This content
+ * {@link DataProvider}. This content
  * provider is
  * automatically populated by  {@link SyncService}.
  *
@@ -67,7 +67,7 @@ import com.vasilkoff.android.Sync.provider.FeedContract;
  * runs immediately. An indeterminate ProgressBar element is displayed, showing that the sync is
  * occurring.
  */
-public class EntryListFragment extends ListFragment
+public class UsersListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String TAG = "EntryListFragment";
@@ -91,15 +91,7 @@ public class EntryListFragment extends ListFragment
      */
     private Menu mOptionsMenu;
 
-    /**
-     * Projection for querying the content provider.
-     */
-    private static final String[] PROJECTION = new String[]{
-            FeedContract.Entry._ID,
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_LINK,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED
-    };
+
 
     // Column indexes. The index of a column in the Cursor is the same as its relative position in
     // the projection.
@@ -116,8 +108,8 @@ public class EntryListFragment extends ListFragment
      * List of Cursor columns to read from when preparing an adapter to populate the ListView.
      */
     private static final String[] FROM_COLUMNS = new String[]{
-            FeedContract.Entry.COLUMN_NAME_TITLE,
-            FeedContract.Entry.COLUMN_NAME_PUBLISHED
+            VideoObject.getProjection()[0],
+            VideoObject.getProjection()[3]
     };
 
     /**
@@ -127,11 +119,7 @@ public class EntryListFragment extends ListFragment
             android.R.id.text1,
             android.R.id.text2};
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public EntryListFragment() {}
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -218,11 +206,11 @@ public class EntryListFragment extends ListFragment
         // We only have one loader, so we can ignore the value of i.
         // (It'll be '0', as set in onCreate().)
         return new CursorLoader(getActivity(),  // Context
-                FeedContract.Entry.CONTENT_URI, // URI
-                PROJECTION,                // Projection
+                VideoObject.getCONTENT_URI(), // URI
+                VideoObject.getProjection(),         // Projection
                 null,                           // Selection
                 null,                           // Selection args
-                FeedContract.Entry.COLUMN_NAME_PUBLISHED + " desc"); // Sort
+                VideoObject.getProjection()[3] + " desc"); // Sort
     }
 
     /**
@@ -352,13 +340,12 @@ public class EntryListFragment extends ListFragment
                     // Test the ContentResolver to see if the sync adapter is active or pending.
                     // Set the state of the refresh button accordingly.
                     boolean syncActive = ContentResolver.isSyncActive(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, DataContract.CONTENT_AUTHORITY);
                     boolean syncPending = ContentResolver.isSyncPending(
-                            account, FeedContract.CONTENT_AUTHORITY);
+                            account, DataContract.CONTENT_AUTHORITY);
                     setRefreshActionButtonState(syncActive || syncPending);
                 }
             });
         }
     };
-
 }

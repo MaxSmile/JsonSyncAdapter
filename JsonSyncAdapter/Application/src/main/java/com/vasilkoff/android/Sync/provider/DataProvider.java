@@ -8,20 +8,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
-import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.db.SelectionBuilder;
+import com.vasilkoff.android.Sync.model.AppObject;
+import com.vasilkoff.android.Sync.model.VideoObject;
 
 /**
  * Created by maxim.vasilkov@gmail.com on 22/08/15.
  */
-public class FeedProvider extends ContentProvider {
+public class DataProvider extends ContentProvider {
 
-    FeedDatabase mDatabaseHelper;
+    Database mDatabaseHelper;
 
     /**
      * Content authority for this provider.
      */
-    private static final String AUTHORITY = FeedContract.CONTENT_AUTHORITY;
+    private static final String AUTHORITY = DataContract.CONTENT_AUTHORITY;
 
     // The constants below represent individual URI routes, as IDs. Every URI pattern recognized by
     // this ContentProvider is defined using sUriMatcher.addURI(), and associated with one of these
@@ -29,28 +30,30 @@ public class FeedProvider extends ContentProvider {
     //
     // When a incoming URI is run through sUriMatcher, it will be tested against the defined
     // URI patterns, and the corresponding route ID will be returned.
-    /**
-     * URI ID for route: /entries
-     */
-    public static final int ROUTE_ENTRIES = 1;
 
-    /**
-     * URI ID for route: /entries/{ID}
-     */
-    public static final int ROUTE_ENTRIES_ID = 2;
+
+    public static final int ROUTE_VIDEOS = 1;
+    public static final int ROUTE_VIDEOS_ID = 2;
+    public static final int ROUTE_APPS = 3;
+    public static final int ROUTE_APPS_ID = 4;
+
+
+
 
     /**
      * UriMatcher, used to decode incoming URIs.
      */
     private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     static {
-        sUriMatcher.addURI(AUTHORITY, "entries", ROUTE_ENTRIES);
-        sUriMatcher.addURI(AUTHORITY, "entries/*", ROUTE_ENTRIES_ID);
+        sUriMatcher.addURI(AUTHORITY, "videos", ROUTE_VIDEOS);
+        sUriMatcher.addURI(AUTHORITY, "videos/*", ROUTE_VIDEOS_ID);
+        sUriMatcher.addURI(AUTHORITY, "apps", ROUTE_APPS);
+        sUriMatcher.addURI(AUTHORITY, "apps/*", ROUTE_APPS_ID);
     }
 
     @Override
     public boolean onCreate() {
-        mDatabaseHelper = new FeedDatabase(getContext());
+        mDatabaseHelper = new Database(getContext());
         return true;
     }
 
@@ -61,10 +64,14 @@ public class FeedProvider extends ContentProvider {
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
         switch (match) {
-            case ROUTE_ENTRIES:
-                return FeedContract.Entry.CONTENT_TYPE;
-            case ROUTE_ENTRIES_ID:
-                return FeedContract.Entry.CONTENT_ITEM_TYPE;
+            case ROUTE_VIDEOS:
+                return VideoObject.getCONTENT_TYPE();
+            case ROUTE_VIDEOS_ID:
+                return VideoObject.getCONTENT_ITEM_TYPE();
+            case ROUTE_APPS:
+                return AppObject.getCONTENT_TYPE();
+            case ROUTE_APPS_ID:
+                return AppObject.getCONTENT_ITEM_TYPE();
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -83,21 +90,34 @@ public class FeedProvider extends ContentProvider {
         SelectionBuilder builder = new SelectionBuilder();
         int uriMatch = sUriMatcher.match(uri);
         switch (uriMatch) {
-            case ROUTE_ENTRIES_ID:
+            case ROUTE_VIDEOS_ID: {
                 // Return a single entry, by ID.
                 String id = uri.getLastPathSegment();
-                builder.where(FeedContract.Entry._ID + "=?", id);
-            case ROUTE_ENTRIES:
-                // Return all known entries.
-                builder.table(FeedContract.Entry.TABLE_NAME)
-                       .where(selection, selectionArgs);
+                builder.where("_id=?", id);
+            }
+            case ROUTE_VIDEOS: {
+                builder.table(VideoObject.class.getSimpleName())
+                        .where(selection, selectionArgs);
                 Cursor c = builder.query(db, projection, sortOrder);
-                // Note: Notification URI must be manually set here for loaders to correctly
-                // register ContentObservers.
                 Context ctx = getContext();
                 assert ctx != null;
                 c.setNotificationUri(ctx.getContentResolver(), uri);
                 return c;
+            }
+            case ROUTE_APPS_ID: {
+                // Return a single entry, by ID.
+                String id = uri.getLastPathSegment();
+                builder.where("_id=?", id);
+            }
+            case ROUTE_APPS: {
+                builder.table(AppObject.class.getSimpleName())
+                        .where(selection, selectionArgs);
+                Cursor c = builder.query(db, projection, sortOrder);
+                Context ctx = getContext();
+                assert ctx != null;
+                c.setNotificationUri(ctx.getContentResolver(), uri);
+                return c;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -113,11 +133,15 @@ public class FeedProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         Uri result;
         switch (match) {
-            case ROUTE_ENTRIES:
-                long id = db.insertOrThrow(FeedContract.Entry.TABLE_NAME, null, values);
-                result = Uri.parse(FeedContract.Entry.CONTENT_URI + "/" + id);
-                break;
-            case ROUTE_ENTRIES_ID:
+            case ROUTE_VIDEOS: {
+                long id = db.insertOrThrow(VideoObject.class.getSimpleName(), null, values);
+                result = Uri.parse(VideoObject.getCONTENT_URI() + "/" + id);
+            } break;
+            case ROUTE_APPS: {
+                long id = db.insertOrThrow(AppObject.class.getSimpleName(), null, values);
+                result = Uri.parse(AppObject.getCONTENT_URI() + "/" + id);
+            } break;
+            case ROUTE_VIDEOS_ID: case ROUTE_APPS_ID:
                 throw new UnsupportedOperationException("Insert not supported on URI: " + uri);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -139,18 +163,30 @@ public class FeedProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         int count;
         switch (match) {
-            case ROUTE_ENTRIES:
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
+            case ROUTE_VIDEOS: {
+                count = builder.table(VideoObject.class.getSimpleName())
                         .where(selection, selectionArgs)
                         .delete(db);
-                break;
-            case ROUTE_ENTRIES_ID:
+            }break;
+            case ROUTE_VIDEOS_ID: {
                 String id = uri.getLastPathSegment();
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
-                       .where(FeedContract.Entry._ID + "=?", id)
-                       .where(selection, selectionArgs)
-                       .delete(db);
-                break;
+                count = builder.table(VideoObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_APPS:{
+                count = builder.table(AppObject.class.getSimpleName())
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_APPS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(AppObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -171,18 +207,30 @@ public class FeedProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         int count;
         switch (match) {
-            case ROUTE_ENTRIES:
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
+            case ROUTE_VIDEOS:
+                count = builder.table(VideoObject.class.getSimpleName())
                         .where(selection, selectionArgs)
                         .update(db, values);
                 break;
-            case ROUTE_ENTRIES_ID:
+            case ROUTE_VIDEOS_ID: {
                 String id = uri.getLastPathSegment();
-                count = builder.table(FeedContract.Entry.TABLE_NAME)
-                        .where(FeedContract.Entry._ID + "=?", id)
+                count = builder.table(VideoObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+            } break;
+            case ROUTE_APPS:
+                count = builder.table(AppObject.class.getSimpleName())
                         .where(selection, selectionArgs)
                         .update(db, values);
                 break;
+            case ROUTE_APPS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(AppObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+            } break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

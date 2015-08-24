@@ -27,14 +27,14 @@ import android.preference.PreferenceManager;
 
 import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
-import com.vasilkoff.android.Sync.provider.FeedContract;
+import com.vasilkoff.android.Sync.provider.DataContract;
 
 /**
  * Static helper methods for working with the sync framework.
  */
 public class SyncUtils {
     private static final long SYNC_FREQUENCY = 120;  // in seconds
-    private static final String CONTENT_AUTHORITY = FeedContract.CONTENT_AUTHORITY;
+    private static final String CONTENT_AUTHORITY = DataContract.CONTENT_AUTHORITY;
     private static final String PREF_SETUP_COMPLETE = "setup_complete";
 
 
@@ -94,7 +94,7 @@ public class SyncUtils {
         b.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
         ContentResolver.requestSync(
                 AccountService.GetAccount(context.getString(R.string.ACCOUNT_TYPE)), // Sync account
-                FeedContract.CONTENT_AUTHORITY,                 // Content authority
+                DataContract.CONTENT_AUTHORITY,                 // Content authority
                 b);                                             // Extras
     }
 }
