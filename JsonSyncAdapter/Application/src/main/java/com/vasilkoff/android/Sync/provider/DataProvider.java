@@ -10,6 +10,8 @@ import android.net.Uri;
 
 import com.vasilkoff.android.Sync.db.SelectionBuilder;
 import com.vasilkoff.android.Sync.model.AppObject;
+import com.vasilkoff.android.Sync.model.CommentObject;
+import com.vasilkoff.android.Sync.model.UserObject;
 import com.vasilkoff.android.Sync.model.VideoObject;
 
 /**
@@ -81,6 +83,14 @@ public class DataProvider extends ContentProvider {
                 return AppObject.getCONTENT_TYPE();
             case ROUTE_APPS_ID:
                 return AppObject.getCONTENT_ITEM_TYPE();
+            case ROUTE_USERS:
+                return UserObject.getCONTENT_TYPE();
+            case ROUTE_USERS_ID:
+                return UserObject.getCONTENT_ITEM_TYPE();
+            case ROUTE_COMNTS:
+                return CommentObject.getCONTENT_TYPE();
+            case ROUTE_COMNTS_ID:
+                return CommentObject.getCONTENT_ITEM_TYPE();
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -127,6 +137,34 @@ public class DataProvider extends ContentProvider {
                 c.setNotificationUri(ctx.getContentResolver(), uri);
                 return c;
             }
+            case ROUTE_USERS_ID: {
+                // Return a single entry, by ID.
+                String id = uri.getLastPathSegment();
+                builder.where("_id=?", id);
+            }
+            case ROUTE_USERS: {
+                builder.table(UserObject.class.getSimpleName())
+                        .where(selection, selectionArgs);
+                Cursor c = builder.query(db, projection, sortOrder);
+                Context ctx = getContext();
+                assert ctx != null;
+                c.setNotificationUri(ctx.getContentResolver(), uri);
+                return c;
+            }
+            case ROUTE_COMNTS_ID: {
+                // Return a single entry, by ID.
+                String id = uri.getLastPathSegment();
+                builder.where("_id=?", id);
+            }
+            case ROUTE_COMNTS: {
+                builder.table(CommentObject.class.getSimpleName())
+                        .where(selection, selectionArgs);
+                Cursor c = builder.query(db, projection, sortOrder);
+                Context ctx = getContext();
+                assert ctx != null;
+                c.setNotificationUri(ctx.getContentResolver(), uri);
+                return c;
+            }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -150,7 +188,15 @@ public class DataProvider extends ContentProvider {
                 long id = db.insertOrThrow(AppObject.class.getSimpleName(), null, values);
                 result = Uri.parse(AppObject.getCONTENT_URI() + "/" + id);
             } break;
-            case ROUTE_VIDEOS_ID: case ROUTE_APPS_ID:
+            case ROUTE_USERS: {
+                long id = db.insertOrThrow(UserObject.class.getSimpleName(), null, values);
+                result = Uri.parse(VideoObject.getCONTENT_URI() + "/" + id);
+            } break;
+            case ROUTE_COMNTS: {
+                long id = db.insertOrThrow(CommentObject.class.getSimpleName(), null, values);
+                result = Uri.parse(AppObject.getCONTENT_URI() + "/" + id);
+            } break;
+            case ROUTE_VIDEOS_ID: case ROUTE_APPS_ID:case ROUTE_COMNTS_ID:case ROUTE_USERS_ID:
                 throw new UnsupportedOperationException("Insert not supported on URI: " + uri);
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -192,6 +238,30 @@ public class DataProvider extends ContentProvider {
             case ROUTE_APPS_ID: {
                 String id = uri.getLastPathSegment();
                 count = builder.table(AppObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_USERS:{
+                count = builder.table(UserObject.class.getSimpleName())
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_USERS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(UserObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_COMNTS:{
+                count = builder.table(CommentObject.class.getSimpleName())
+                        .where(selection, selectionArgs)
+                        .delete(db);
+            } break;
+            case ROUTE_COMNTS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(CommentObject.class.getSimpleName())
                         .where("_id=?", id)
                         .where(selection, selectionArgs)
                         .delete(db);

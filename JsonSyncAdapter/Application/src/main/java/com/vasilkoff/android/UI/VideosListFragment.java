@@ -108,8 +108,8 @@ public class VideosListFragment extends ListFragment
      * List of Cursor columns to read from when preparing an adapter to populate the ListView.
      */
     private static final String[] FROM_COLUMNS = new String[]{
-            VideoObject.getProjection()[0],
-            VideoObject.getProjection()[3]
+            VideoObject.getProjection()[1],
+            VideoObject.getProjection()[2]
     };
 
     /**
@@ -214,7 +214,7 @@ public class VideosListFragment extends ListFragment
                 VideoObject.getProjection(),         // Projection
                 null,                           // Selection
                 null,                           // Selection args
-                VideoObject.getProjection()[3] + " desc"); // Sort
+                ""); // Sort
     }
 
     /**
@@ -275,15 +275,15 @@ public class VideosListFragment extends ListFragment
         // Get the item at the selected position, in the form of a Cursor.
         Cursor c = (Cursor) mAdapter.getItem(position);
         // Get the link to the article represented by the item.
-        String articleUrlString = c.getString(COLUMN_URL_STRING);
-        if (articleUrlString == null) {
+        String t = c.getString(COLUMN_TITLE);
+        if (t == null) {
             Log.e(TAG, "Attempt to launch entry with null link");
             return;
         }
 
         new AlertDialog.Builder(getContext())
                 .setTitle("Selected")
-                .setMessage(articleUrlString)
+                .setMessage(t)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete
