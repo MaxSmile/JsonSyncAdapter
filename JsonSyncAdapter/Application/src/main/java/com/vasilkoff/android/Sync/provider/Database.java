@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.vasilkoff.android.Sync.model.AppObject;
 import com.vasilkoff.android.Sync.model.VideoObject;
 
 import java.lang.reflect.Field;
@@ -54,7 +55,7 @@ public class Database extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(getSqlToCreateTable(VideoObject.class));
-        //db.execSQL(getSqlToCreateTable(AppObject.class));
+        db.execSQL(getSqlToCreateTable(AppObject.class));
         //db.execSQL(getSqlToCreateTable(UserObject.class));
     }
 
@@ -63,7 +64,7 @@ public class Database extends SQLiteOpenHelper {
         // This database is only a cache for online data, so its upgrade policy is
         // to simply to discard the data and start over
         db.execSQL(getSqlToDeleteTable(VideoObject.class));
-        //db.execSQL(getSqlToDeleteTable(AppObject.class));
+        db.execSQL(getSqlToDeleteTable(AppObject.class));
         //db.execSQL(getSqlToDeleteTable(UserObject.class));
         onCreate(db);
     }

@@ -36,6 +36,10 @@ public class DataProvider extends ContentProvider {
     public static final int ROUTE_VIDEOS_ID = 2;
     public static final int ROUTE_APPS = 3;
     public static final int ROUTE_APPS_ID = 4;
+    public static final int ROUTE_USERS = 5;
+    public static final int ROUTE_USERS_ID = 6;
+    public static final int ROUTE_COMNTS = 7;
+    public static final int ROUTE_COMNTS_ID = 8;
 
 
 
@@ -49,6 +53,11 @@ public class DataProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "videos/*", ROUTE_VIDEOS_ID);
         sUriMatcher.addURI(AUTHORITY, "apps", ROUTE_APPS);
         sUriMatcher.addURI(AUTHORITY, "apps/*", ROUTE_APPS_ID);
+        sUriMatcher.addURI(AUTHORITY, "users", ROUTE_USERS);
+        sUriMatcher.addURI(AUTHORITY, "users/*", ROUTE_USERS_ID);
+        sUriMatcher.addURI(AUTHORITY, "comments", ROUTE_COMNTS);
+        sUriMatcher.addURI(AUTHORITY, "comments/*", ROUTE_COMNTS_ID);
+
     }
 
     @Override

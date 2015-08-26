@@ -28,7 +28,7 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.model.AppObject;an
+import com.vasilkoff.android.Sync.model.AppObject;
 import com.vasilkoff.android.Sync.provider.DataContract;
 
 

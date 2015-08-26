@@ -50,12 +50,19 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     private static final String APPS_URL = "https://www.qviky.com/qvk/api/v1.2/apps?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&user_id=0";
-
+    private static int appsPage = 0;
 
     private static final String VIDEO_URL =
             "https://www.qviky.com/qvk/api/v1.2/feed?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&user_id=0";
+    private static int videoPage = 0;
 
+    private static final String USERS_URL =
+            "https://www.qviky.com/qvk/api/v1.2.1/users?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&user_id=35&type=retrieve";
+    private static int usersPage = 0;
 
+    private static final String COMMENTS_URL =
+            "https://www.qviky.com/qvk/api/v1.2/comment?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=";
+    private static int commentsPage = 0;
 
     /**
      * Content resolver, for performing database operations.
@@ -85,27 +92,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         mContentResolver = context.getContentResolver();
     }
 
-    /**
-     * Called by the Android system in response to a request to run the sync adapter. The work
-     * required to read data from the network, parse it, and store it in the content provider is
-     * done here. Extending AbstractThreadedSyncAdapter ensures that all methods within SyncAdapter
-     * run on a background thread. For this reason, blocking I/O and other long-running tasks can be
-     * run <em>in situ</em>, and you don't have to set up a separate thread for them.
-     .
-     *
-     * <p>This is where we actually perform any work required to perform a sync.
-     * {@link android.content.AbstractThreadedSyncAdapter} guarantees that this will be called on a non-UI thread,
-     * so it is safe to peform blocking I/O here.
-     *
-     * <p>The syncResult argument allows you to pass information back to the method that triggered
-     * the sync.
-     */
-    @Override
-    public void onPerformSync(Account account, Bundle extras, String authority,
-                              ContentProviderClient provider, final SyncResult syncResult) {
-        Log.i(TAG, "Beginning network synchronization");
+    public void getVideoPage(int page,final SyncResult syncResult) {
         AQuery aq = new AQuery(getContext());
-        aq.ajax(VIDEO_URL, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax(VIDEO_URL+"&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 try {
@@ -115,8 +104,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         });
+    }
 
-        aq.ajax(APPS_URL, JSONObject.class, new AjaxCallback<JSONObject>() {
+    public void getAppsPage(int page,final SyncResult syncResult) {
+        AQuery aq = new AQuery(getContext());
+        aq.ajax(APPS_URL+"&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 try {
@@ -126,6 +118,42 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             }
         });
+    }
+
+    public void getUsersPage(int page,final SyncResult syncResult) {
+        AQuery aq = new AQuery(getContext());
+        aq.ajax(APPS_URL+"&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                try {
+                    updateLocalAppData(json, syncResult, AppObject.getCONTENT_URI(), AppObject.getProjection());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void getCommentsPage(int page,final SyncResult syncResult) {
+        AQuery aq = new AQuery(getContext());
+        aq.ajax(COMMENTS_URL+"&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                try {
+                    updateLocalAppData(json, syncResult, AppObject.getCONTENT_URI(), AppObject.getProjection());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras, String authority,
+                              ContentProviderClient provider, final SyncResult syncResult) {
+        Log.i(TAG, "Beginning network synchronization");
+        getVideoPage(videoPage, syncResult);
+        getAppsPage(appsPage, syncResult);
 
     }
 
@@ -137,7 +165,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             OperationApplicationException {
 
         final ContentResolver contentResolver = getContext().getContentResolver();
-
+        int pages = data.getInt("totalPages");
+        videoPage = data.getInt("currentPage");
+        if (pages<videoPage) {
+            getVideoPage(videoPage+1,syncResult);
+        }
         JSONArray entries = data.getJSONArray("result");
         Log.i(TAG, "Parsing complete. Found " + entries.length() + " entries");
 
