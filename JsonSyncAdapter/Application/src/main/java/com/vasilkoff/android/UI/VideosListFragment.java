@@ -40,6 +40,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
 import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
@@ -48,34 +49,16 @@ import com.vasilkoff.android.Sync.model.VideoObject;
 import com.vasilkoff.android.Sync.provider.DataProvider;
 import com.vasilkoff.android.Sync.provider.DataContract;
 
-/**
- * List fragment containing a list of Atom entry objects (articles) stored in the local database.
- *
- * <p>Database access is mediated by a content provider, specified in
- * {@link DataProvider}. This content
- * provider is
- * automatically populated by  {@link SyncService}.
- *
- * <p>Selecting an item from the displayed list displays the article in the default browser.
- *
- * <p>If the content provider doesn't return any data, then the first sync hasn't run yet. This sync
- * adapter assumes data exists in the provider once a sync has run. If your app doesn't work like
- * this, you should add a flag that notes if a sync has run, so you can differentiate between "no
- * available data" and "no initial sync", and display this in the UI.
- *
- * <p>The ActionBar displays a "Refresh" button. When the user clicks "Refresh", the sync adapter
- * runs immediately. An indeterminate ProgressBar element is displayed, showing that the sync is
- * occurring.
- */
+
 public class VideosListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = "EntryListFragment";
+    private static final String TAG = VideosListFragment.class.getSimpleName();
 
     /**
      * Cursor adapter for controlling ListView results.
      */
-    private SimpleCursorAdapter mAdapter;
+    private VideoListAdapter mAdapter;
 
     /**
      * Handle to a SyncObserver. The ProgressBar element is visible until the SyncObserver reports
@@ -93,31 +76,6 @@ public class VideosListFragment extends ListFragment
 
 
 
-    // Column indexes. The index of a column in the Cursor is the same as its relative position in
-    // the projection.
-    /** Column index for _ID */
-    private static final int COLUMN_ID = 0;
-    /** Column index for title */
-    private static final int COLUMN_TITLE = 1;
-    /** Column index for link */
-    private static final int COLUMN_URL_STRING = 2;
-    /** Column index for published */
-    private static final int COLUMN_PUBLISHED = 3;
-
-    /**
-     * List of Cursor columns to read from when preparing an adapter to populate the ListView.
-     */
-    private static final String[] FROM_COLUMNS = new String[]{
-            VideoObject.getProjection()[1],
-            VideoObject.getProjection()[2]
-    };
-
-    /**
-     * List of Views which will be populated by Cursor data.
-     */
-    private static final int[] TO_FIELDS = new int[]{
-            android.R.id.text1,
-            android.R.id.text2};
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -149,29 +107,30 @@ public class VideosListFragment extends ListFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new SimpleCursorAdapter(
-                getActivity(),       // Current context
-                android.R.layout.simple_list_item_activated_2,  // Layout for individual rows
-                null,                // Cursor
-                FROM_COLUMNS,        // Cursor columns to use
-                TO_FIELDS,           // Layout fields to use
-                0                    // No flags
-        );
-        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int i) {
-                if (i == COLUMN_PUBLISHED) {
-                    // Convert timestamp to human-readable date
-                    Time t = new Time();
-                    t.set(cursor.getLong(i));
-                    ((TextView) view).setText(t.format("%Y-%m-%d %H:%M"));
-                    return true;
-                } else {
-                    // Let SimpleCursorAdapter handle other fields automatically
-                    return false;
-                }
-            }
-        });
+        mAdapter = new VideoListAdapter(getContext(),R.layout.video_list_row,null,0);
+
+//        mAdapter = new SimpleCursorAdapter(
+//                getActivity(),       // Current context
+//                android.R.layout.simple_list_item_activated_2,  // Layout for individual rows
+//                null,                // Cursor
+//                FROM_COLUMNS,        // Cursor columns to use
+//                TO_FIELDS,           // Layout fields to use
+//                0                    // No flags
+//        );
+//
+//        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+//            @Override
+//            public boolean setViewValue(View view, Cursor cursor, int i) {
+//                final int imageColumn = cursor.getColumnIndex("bitmap_preview");
+//                if (i == imageColumn) {
+//                    aq.id(R.id.imageView).image(cursor.getString(cursor.getColumnIndex("bitmap_preview")));
+//                    return true;
+//                } else {
+//                    // Let SimpleCursorAdapter handle other fields automatically
+//                    return false;
+//                }
+//            }
+//        });
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
         getLoaderManager().initLoader(0, null, this);
@@ -267,28 +226,24 @@ public class VideosListFragment extends ListFragment
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-
-        // Get a URI for the selected item, then start an Activity that displays the URI. Any
-        // Activity that filters for ACTION_VIEW and a URI can accept this. In most cases, this will
-        // be a browser.
-
-        // Get the item at the selected position, in the form of a Cursor.
         Cursor c = (Cursor) mAdapter.getItem(position);
-        // Get the link to the article represented by the item.
-        String t = c.getString(COLUMN_TITLE);
-        if (t == null) {
-            Log.e(TAG, "Attempt to launch entry with null link");
-            return;
-        }
+        if (!c.isClosed()) {
+            final int colId = c.getColumnIndex("id");
+            String t = c.getString(colId);
+            if (t == null) {
+                Log.e(TAG, "Attempt to launch entry with null link");
+                return;
+            }
 
-        new AlertDialog.Builder(getContext())
-                .setTitle("Selected")
-                .setMessage(t)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // continue with delete
-                    }
-                }).show();
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Selected")
+                    .setMessage(t)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // I <3 Android :)
+                        }
+                    }).show();
+        }
     }
 
     /**

@@ -17,7 +17,7 @@ public class UsersListActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_entry_list);
+        setContentView(R.layout.activity_users_list);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }

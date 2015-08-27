@@ -10,14 +10,14 @@ import com.vasilkoff.android.R;
 
 
 /**
- * Activity for holding VideosListFragment.
+ * Activity for holding AppsListFragment.
  */
-public class VideosListActivity extends FragmentActivity {
+public class CommentsListActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_videos_list);
+        setContentView(R.layout.activity_comments_list);
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }

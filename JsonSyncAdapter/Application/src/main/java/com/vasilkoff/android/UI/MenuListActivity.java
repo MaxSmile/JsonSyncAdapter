@@ -48,17 +48,17 @@ public class MenuListActivity extends Activity
                 case "videos": {
                     Intent detailIntent = new Intent(this, VideosListActivity.class);
                     startActivity(detailIntent);
-                } break;
+                } return;
                 case "apps": {
                     Intent detailIntent = new Intent(this, AppsListActivity.class);
                     startActivity(detailIntent);
-                } break;
+                } return;
                 case "users": {
                     Intent detailIntent = new Intent(this, UsersListActivity.class);
                     startActivity(detailIntent);
-                } break;
+                } return;
                 default:
-                    Intent detailIntent = new Intent(this, UsersListActivity.class);
+                    Intent detailIntent = new Intent(this, CommentsListActivity.class);
                     startActivity(detailIntent);
             }
 

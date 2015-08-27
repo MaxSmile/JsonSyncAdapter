@@ -34,15 +34,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Define a sync adapter for the app.
- *
- * <p>This class is instantiated in {@link SyncService}, which also binds SyncAdapter to the system.
- * SyncAdapter should only be initialized in SyncService, never anywhere else.
- *
- * <p>The system calls onPerformSync() via an RPC call through the IBinder object supplied by
- * SyncService.
- */
+
 class SyncAdapter extends AbstractThreadedSyncAdapter {
     public static final String TAG = SyncAdapter.class.getSimpleName();
 
@@ -58,7 +50,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static int videoPage = 0;
 
     private static final String USERS_URL =
-            "https://www.qviky.com/qvk/api/v1.2.1/users?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&user_id=35&type=retrieve";
+            "https://www.qviky.com/qvk/api/v1.2.1/users?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&type=retrieve&user_id=";
     private static int usersPage = 0;
 
     private static final String COMMENTS_URL =
@@ -227,11 +219,12 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             } else {
                 // Entry doesn't exist. Remove it from the database.
-                Uri deleteUri = VideoObject.getCONTENT_URI().buildUpon()
-                        .appendPath(Integer.toString(id)).build();
-                Log.i(TAG, "Scheduling delete: " + deleteUri);
-                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
-                syncResult.stats.numDeletes++;
+//
+//                Uri deleteUri = VideoObject.getCONTENT_URI().buildUpon()
+//                        .appendPath(Integer.toString(id)).build();
+//                Log.i(TAG, "Scheduling delete: " + deleteUri);
+//                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
+//                syncResult.stats.numDeletes++;
             }
         }
         c.close();
@@ -336,11 +329,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             } else {
                 // Entry doesn't exist. Remove it from the database.
-                Uri deleteUri = AppObject.getCONTENT_URI().buildUpon()
-                        .appendPath(Integer.toString(id)).build();
-                Log.i(TAG, "Scheduling delete: " + deleteUri);
-                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
-                syncResult.stats.numDeletes++;
+//                Uri deleteUri = AppObject.getCONTENT_URI().buildUpon()
+//                        .appendPath(Integer.toString(id)).build();
+//                Log.i(TAG, "Scheduling delete: " + deleteUri);
+//                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
+//                syncResult.stats.numDeletes++;
             }
         }
         c.close();
@@ -445,11 +438,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             } else {
                 // Entry doesn't exist. Remove it from the database.
-                Uri deleteUri = UserObject.getCONTENT_URI().buildUpon()
-                        .appendPath(Integer.toString(id)).build();
-                Log.i(TAG, "Scheduling delete: " + deleteUri);
-                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
-                syncResult.stats.numDeletes++;
+//                Uri deleteUri = UserObject.getCONTENT_URI().buildUpon()
+//                        .appendPath(Integer.toString(id)).build();
+//                Log.i(TAG, "Scheduling delete: " + deleteUri);
+//                batch.add(ContentProviderOperation.newDelete(deleteUri).build());
+//                syncResult.stats.numDeletes++;
             }
         }
         c.close();

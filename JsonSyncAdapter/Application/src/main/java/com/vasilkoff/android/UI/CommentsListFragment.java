@@ -15,14 +15,11 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.text.format.Time;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
@@ -32,10 +29,10 @@ import com.vasilkoff.android.Sync.model.AppObject;
 import com.vasilkoff.android.Sync.provider.DataContract;
 
 
-public class AppsListFragment extends ListFragment
+public class CommentsListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = AppsListFragment.class.getSimpleName();
+    private static final String TAG = CommentsListFragment.class.getSimpleName();
 
     /**
      * Cursor adapter for controlling ListView results.

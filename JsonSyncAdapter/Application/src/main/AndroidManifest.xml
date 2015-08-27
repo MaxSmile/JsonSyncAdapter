@@ -101,7 +101,10 @@
             android:name=".UI.AppsListActivity"
             android:label="@string/Apps_title" >
         </activity>
-
+        <activity
+            android:name=".UI.CommentsListActivity"
+            android:label="@string/Apps_title" >
+        </activity>
 
     </application>
 
