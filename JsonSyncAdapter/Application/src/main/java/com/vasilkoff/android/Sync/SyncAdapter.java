@@ -115,7 +115,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     public void getUsersPage(int page,final SyncResult syncResult) {
         AQuery aq = new AQuery(getContext());
-        aq.ajax(USERS_URL+"&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax(USERS_URL+"35&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 try {
@@ -147,7 +147,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         Log.i(TAG, "Beginning network synchronization");
         getVideoPage(videoPage, syncResult);
         getAppsPage(appsPage, syncResult);
-        getUsersPage(usersPage,syncResult);
+        //getUsersPage(usersPage,syncResult);
     }
 
 
@@ -158,11 +158,10 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             OperationApplicationException {
 
         final ContentResolver contentResolver = getContext().getContentResolver();
-        int pages = data.getInt("totalPages");
-        videoPage = data.getInt("currentPage");
-        if (pages>videoPage) {
-            getVideoPage(videoPage+1,syncResult);
-        }
+
+
+
+
         JSONArray entries = data.getJSONArray("result");
         Log.i(TAG, "Parsing complete. Found " + entries.length() + " entries");
 
@@ -255,8 +254,11 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
                 VideoObject.getCONTENT_URI(), // URI where data was modified
                 null,                           // No local observer
                 false);                         // IMPORTANT: Do not sync to network
-        // This sample doesn't support uploads, but if *your* code does, make sure you set
-        // syncToNetwork=false in the line above to prevent duplicate syncs.
+        int pages = data.getInt("totalPages");
+        videoPage = data.getInt("currentPage");
+        if (pages>videoPage) {
+            getVideoPage(videoPage+1,syncResult);
+        }
     }
 
 
@@ -267,13 +269,8 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             OperationApplicationException {
 
         final ContentResolver contentResolver = getContext().getContentResolver();
-        int pages = data.getInt("totalPages");
-        appsPage = data.getInt("currentPage");
-        if (pages>appsPage) {
-            getAppsPage(appsPage + 1, syncResult);
-        }
 
-        JSONArray entries = data.getJSONArray("result");
+        JSONArray entries = data.getJSONArray("apps");
         Log.i(TAG, "Parsing complete. Found " + entries.length() + " entries");
 
 

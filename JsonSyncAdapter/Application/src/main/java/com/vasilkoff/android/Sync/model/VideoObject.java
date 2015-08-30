@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
  */
 public class VideoObject extends ModelObject {
 
-    public String id;
     public String author;
     public String created_at;
     public String video_path;
@@ -29,13 +28,13 @@ public class VideoObject extends ModelObject {
     /**
      * MIME type for lists of entries.
      */
-    public static final String getCONTENT_TYPE() {
+    public static String getCONTENT_TYPE() {
         return ContentResolver.CURSOR_DIR_BASE_TYPE + "/vnd.jsonsyncadapter.videos";
     }
     /**
      * MIME type for individual entries.
      */
-    public static final String getCONTENT_ITEM_TYPE() {
+    public static String getCONTENT_ITEM_TYPE() {
         return ContentResolver.CURSOR_ITEM_BASE_TYPE + "/vnd.jsonsyncadapter.video";
     }
 

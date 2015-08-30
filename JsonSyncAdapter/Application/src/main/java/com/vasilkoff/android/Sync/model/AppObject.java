@@ -10,7 +10,6 @@ import com.vasilkoff.android.Sync.provider.DataContract;
  */
 public class AppObject  extends ModelObject {
 
-    public String id;//": "152",
     public String app_name;//": "Zombie Highway 2",
     public String app_icon;//": "https://www.qviky.com/qviky/apps/com.auxbrain.zh2/icon.jpg",
     public String app_bundle_id;//": "com.auxbrain.zh2",

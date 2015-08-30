@@ -42,6 +42,7 @@ public class DataProvider extends ContentProvider {
     public static final int ROUTE_USERS_ID = 6;
     public static final int ROUTE_COMNTS = 7;
     public static final int ROUTE_COMNTS_ID = 8;
+    public static final int ROUTE_VIDEOS_COMPLEX = 9;
 
 
 
@@ -59,7 +60,7 @@ public class DataProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "users/*", ROUTE_USERS_ID);
         sUriMatcher.addURI(AUTHORITY, "comments", ROUTE_COMNTS);
         sUriMatcher.addURI(AUTHORITY, "comments/*", ROUTE_COMNTS_ID);
-
+        sUriMatcher.addURI(AUTHORITY, "feed", ROUTE_VIDEOS_COMPLEX);
     }
 
     @Override
@@ -164,6 +165,13 @@ public class DataProvider extends ContentProvider {
                 assert ctx != null;
                 c.setNotificationUri(ctx.getContentResolver(), uri);
                 return c;
+            }
+            case ROUTE_VIDEOS_COMPLEX: {
+                String query = "SELECT * FROM "+VideoObject.class.getSimpleName()+" v," +
+                    AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id";
+
+                Cursor cursor = db.rawQuery(query, null);
+                return cursor;
             }
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -306,6 +314,30 @@ public class DataProvider extends ContentProvider {
             case ROUTE_APPS_ID: {
                 String id = uri.getLastPathSegment();
                 count = builder.table(AppObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+            } break;
+            case ROUTE_USERS:
+                count = builder.table(UserObject.class.getSimpleName())
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+                break;
+            case ROUTE_USERS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(UserObject.class.getSimpleName())
+                        .where("_id=?", id)
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+            } break;
+            case ROUTE_COMNTS:
+                count = builder.table(CommentObject.class.getSimpleName())
+                        .where(selection, selectionArgs)
+                        .update(db, values);
+                break;
+            case ROUTE_COMNTS_ID: {
+                String id = uri.getLastPathSegment();
+                count = builder.table(CommentObject.class.getSimpleName())
                         .where("_id=?", id)
                         .where(selection, selectionArgs)
                         .update(db, values);

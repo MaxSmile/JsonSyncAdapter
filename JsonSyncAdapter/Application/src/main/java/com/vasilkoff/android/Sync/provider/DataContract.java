@@ -1,10 +1,8 @@
 package com.vasilkoff.android.Sync.provider;
 
 import android.net.Uri;
-public class DataContract {
-    private DataContract() {
-    }
 
+public class DataContract {
     /**
      * Content provider authority. Kepp it the same with
      */
@@ -14,8 +12,5 @@ public class DataContract {
      * Base URI.
      */
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
-
-
-
 
 }

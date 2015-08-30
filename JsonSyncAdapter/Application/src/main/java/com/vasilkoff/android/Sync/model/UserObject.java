@@ -11,7 +11,7 @@ import com.vasilkoff.android.Sync.provider.DataContract;
 public class UserObject  extends ModelObject {
 
 
-    public String id;
+
     public String username;
     public String picture_path;
 

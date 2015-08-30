@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.vasilkoff.android.Sync.model.AppObject;
+import com.vasilkoff.android.Sync.model.CommentObject;
+import com.vasilkoff.android.Sync.model.UserObject;
 import com.vasilkoff.android.Sync.model.VideoObject;
 
 import java.lang.reflect.Field;
@@ -56,7 +58,8 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(getSqlToCreateTable(VideoObject.class));
         db.execSQL(getSqlToCreateTable(AppObject.class));
-        //db.execSQL(getSqlToCreateTable(UserObject.class));
+        db.execSQL(getSqlToCreateTable(UserObject.class));
+        db.execSQL(getSqlToCreateTable(CommentObject.class));
     }
 
     @Override
@@ -65,7 +68,8 @@ public class Database extends SQLiteOpenHelper {
         // to simply to discard the data and start over
         db.execSQL(getSqlToDeleteTable(VideoObject.class));
         db.execSQL(getSqlToDeleteTable(AppObject.class));
-        //db.execSQL(getSqlToDeleteTable(UserObject.class));
+        db.execSQL(getSqlToDeleteTable(UserObject.class));
+        db.execSQL(getSqlToDeleteTable(CommentObject.class));
         onCreate(db);
     }
 }

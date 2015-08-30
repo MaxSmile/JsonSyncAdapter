@@ -44,7 +44,8 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.model.VideoObject;
+import com.vasilkoff.android.Sync.model.AppObject;
+import com.vasilkoff.android.Sync.model.UserObject;
 import com.vasilkoff.android.Sync.provider.DataProvider;
 import com.vasilkoff.android.Sync.provider.DataContract;
 
@@ -92,13 +93,6 @@ public class UsersListFragment extends ListFragment
     private Menu mOptionsMenu;
 
 
-
-    // Column indexes. The index of a column in the Cursor is the same as its relative position in
-    // the projection.
-    /** Column index for _ID */
-    private static final int COLUMN_ID = 0;
-    /** Column index for title */
-    private static final int COLUMN_TITLE = 1;
     /** Column index for link */
     private static final int COLUMN_URL_STRING = 2;
     /** Column index for published */
@@ -108,8 +102,8 @@ public class UsersListFragment extends ListFragment
      * List of Cursor columns to read from when preparing an adapter to populate the ListView.
      */
     private static final String[] FROM_COLUMNS = new String[]{
-            VideoObject.getProjection()[0],
-            VideoObject.getProjection()[3]
+            AppObject.getProjection()[1],
+            AppObject.getProjection()[2]
     };
 
     /**
@@ -206,11 +200,11 @@ public class UsersListFragment extends ListFragment
         // We only have one loader, so we can ignore the value of i.
         // (It'll be '0', as set in onCreate().)
         return new CursorLoader(getActivity(),  // Context
-                VideoObject.getCONTENT_URI(), // URI
-                VideoObject.getProjection(),         // Projection
+                UserObject.getCONTENT_URI(), // URI
+                UserObject.getProjection(),         // Projection
                 null,                           // Selection
                 null,                           // Selection args
-                VideoObject.getProjection()[3] + " desc"); // Sort
+                null); // Sort
     }
 
     /**
