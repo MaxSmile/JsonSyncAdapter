@@ -12,7 +12,7 @@ import com.vasilkoff.android.Sync.model.VideoObject;
 import java.lang.reflect.Field;
 
 /**
- * Created by user on 22/08/15.
+ * Created by maxim.vasilkov@gmail.com on 22/08/15.
  */
 public class Database extends SQLiteOpenHelper {
 
@@ -64,8 +64,6 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // This database is only a cache for online data, so its upgrade policy is
-        // to simply to discard the data and start over
         db.execSQL(getSqlToDeleteTable(VideoObject.class));
         db.execSQL(getSqlToDeleteTable(AppObject.class));
         db.execSQL(getSqlToDeleteTable(UserObject.class));

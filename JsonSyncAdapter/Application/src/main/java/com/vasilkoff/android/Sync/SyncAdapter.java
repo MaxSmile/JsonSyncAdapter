@@ -53,11 +53,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private static final String USERS_URL =
             "https://www.qviky.com/qvk/api/v1.2.1/users?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=&type=retrieve&user_id=";
-    private static int usersPage = 0;
 
     private static final String COMMENTS_URL =
             "https://www.qviky.com/qvk/api/v1.2/comment?unique_key=Uf+9kh3711nwpBRooJrktAMtkTVYktqcJOnehtss4ts=";
-    private static int commentsPage = 0;
 
     /**
      * Content resolver, for performing database operations.
@@ -107,7 +105,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 try {
-                    AppsSyncHelper.updateLocalAppData(getContext(),json, syncResult, mContentResolver);
+                    AppsSyncHelper.updateLocalAppData(getContext(), json, syncResult, mContentResolver);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -115,9 +113,9 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         });
     }
 
-    public void getUsersPage(int page,final SyncResult syncResult) {
+    public void getUsersPage(String userId,final SyncResult syncResult) {
         AQuery aq = new AQuery(getContext());
-        aq.ajax(USERS_URL+"35&page="+page, JSONObject.class, new AjaxCallback<JSONObject>() {
+        aq.ajax(USERS_URL+userId, JSONObject.class, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 try {
@@ -238,6 +236,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         for (VideoObject e : entryMap.values()) {
             Log.i(TAG, "Scheduling insert: entry_id=" + e.id);
 
+            getUsersPage(e.author,syncResult);
             ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(VideoObject.getCONTENT_URI());
             Field fileds[] = VideoObject.class.getFields();
             for (int i = 0; i < fileds.length; i++) {

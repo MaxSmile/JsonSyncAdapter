@@ -14,7 +14,7 @@ import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,27 +25,18 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.model.CommentObject;
+import com.vasilkoff.android.Sync.model.FeedObject;
+import com.vasilkoff.android.Sync.model.VideoObject;
 import com.vasilkoff.android.Sync.provider.DataContract;
 
 
-public class CommentsListFragment extends ListFragment
+public class FeedListFragment extends ListFragment
         implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final String TAG = CommentsListFragment.class.getSimpleName();
+    private static final String TAG = FeedListFragment.class.getSimpleName();
 
-    /**
-     * Cursor adapter for controlling ListView results.
-     */
-    private SimpleCursorAdapter mAdapter;
+    private FeedListAdapter mAdapter;
 
-    /**
-     * Handle to a SyncObserver. The ProgressBar element is visible until the SyncObserver reports
-     * that the sync is complete.
-     *
-     * <p>This allows us to delete our SyncObserver once the application is no longer in the
-     * foreground.
-     */
     private Object mSyncObserverHandle;
 
     /**
@@ -54,22 +45,7 @@ public class CommentsListFragment extends ListFragment
     private Menu mOptionsMenu;
 
 
-
-    /**
-     * List of Cursor columns to read from when preparing an adapter to populate the ListView.
-     */
-    private static final String[] FROM_COLUMNS = new String[]{
-            CommentObject.getProjection()[0],
-            CommentObject.getProjection()[1]
-    };
-
-    /**
-     * List of Views which will be populated by Cursor data.
-     */
-    private static final int[] TO_FIELDS = new int[]{
-            android.R.id.text1,
-            android.R.id.text2};
-
+    public FeedListFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,12 +53,6 @@ public class CommentsListFragment extends ListFragment
         setHasOptionsMenu(true);
     }
 
-    /**
-     * Create SyncAccount at launch, if needed.
-     *
-     * <p>This will create a new account with the system for our application, register our
-     * {@link SyncService} with it, and establish a sync schedule.
-     */
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -95,20 +65,8 @@ public class CommentsListFragment extends ListFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new SimpleCursorAdapter(
-                getActivity(),       // Current context
-                android.R.layout.simple_list_item_activated_2,  // Layout for individual rows
-                null,                // Cursor
-                FROM_COLUMNS,        // Cursor columns to use
-                TO_FIELDS,           // Layout fields to use
-                0                    // No flags
-        );
-        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int i) {
-                return false;
-            }
-        });
+        mAdapter = new FeedListAdapter(getContext(),R.layout.video_list_row,null,0);
+
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
         getLoaderManager().initLoader(0, null, this);
@@ -134,49 +92,29 @@ public class CommentsListFragment extends ListFragment
         }
     }
 
-    /**
-     * Query the content provider for data.
-     *
-     * <p>Loaders do queries in a background thread. They also provide a ContentObserver that is
-     * triggered when data in the content provider changes. When the sync adapter updates the
-     * content provider, the ContentObserver responds by resetting the loader and then reloading
-     * it.
-     */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        // We only have one loader, so we can ignore the value of i.
-        // (It'll be '0', as set in onCreate().)
         return new CursorLoader(getActivity(),  // Context
-                CommentObject.getCONTENT_URI(), // URI
-                CommentObject.getProjection(),    // Projection
+                FeedObject.getCONTENT_URI(), // URI
+                FeedObject.getProjection(),         // Projection
                 null,                           // Selection
                 null,                           // Selection args
-                null); // Sort
+                ""); // Sort
     }
 
-    /**
-     * Move the Cursor returned by the query into the ListView adapter. This refreshes the existing
-     * UI with the data in the Cursor.
-     */
+
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         mAdapter.changeCursor(cursor);
     }
 
-    /**
-     * Called when the ContentObserver defined for the content provider detects that data has
-     * changed. The ContentObserver resets the loader, and then re-runs the loader. In the adapter,
-     * set the Cursor value to null. This removes the reference to the Cursor, allowing it to be
-     * garbage-collected.
-     */
+
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
         mAdapter.changeCursor(null);
     }
 
-    /**
-     * Create the ActionBar.
-     */
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -198,33 +136,31 @@ public class CommentsListFragment extends ListFragment
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Load an article in the default browser when selected by the user.
-     */
+
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-
         Cursor c = (Cursor) mAdapter.getItem(position);
-        String t = c.getString(1);
+        if (!c.isClosed()) {
+            final int colId = c.getColumnIndex("id");
+            String t = c.getString(colId);
+            if (t == null) {
+                Log.e(TAG, "Attempt to launch entry with null link");
+                return;
+            }
 
-
-        new AlertDialog.Builder(getContext())
-                .setTitle("Selected")
-                .setMessage(t)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).show();
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Selected")
+                    .setMessage(t)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // I <3 Android :)
+                        }
+                    }).show();
+        }
     }
 
-    /**
-     * Set the state of the Refresh button. If a sync is active, turn on the ProgressBar widget.
-     * Otherwise, turn it off.
-     *
-     * @param refreshing True if an active sync is occuring, false otherwise
-     */
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void setRefreshActionButtonState(boolean refreshing) {
         if (mOptionsMenu == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
@@ -241,12 +177,6 @@ public class CommentsListFragment extends ListFragment
         }
     }
 
-    /**
-     * Crfate a new anonymous SyncStatusObserver. It's attached to the app's ContentResolver in
-     * onResume(), and removed in onPause(). If status changes, it sets the state of the Refresh
-     * button. If a sync is active or pending, the Refresh button is replaced by an indeterminate
-     * ProgressBar; otherwise, the button itself is displayed.
-     */
     private SyncStatusObserver mSyncStatusObserver = new SyncStatusObserver() {
         /** Callback invoked with the sync adapter status changes. */
         @Override
@@ -258,19 +188,11 @@ public class CommentsListFragment extends ListFragment
                  */
                 @Override
                 public void run() {
-                    // Create a handle to the account that was created by
-                    // SyncService.CreateSyncAccount(). This will be used to query the system to
-                    // see how the sync status has changed.
                     Account account = AccountService.GetAccount(getActivity().getString(R.string.ACCOUNT_TYPE));
                     if (account == null) {
-                        // GetAccount() returned an invalid value. This shouldn't happen, but
-                        // we'll set the status to "not refreshing".
                         setRefreshActionButtonState(false);
                         return;
                     }
-
-                    // Test the ContentResolver to see if the sync adapter is active or pending.
-                    // Set the state of the refresh button accordingly.
                     boolean syncActive = ContentResolver.isSyncActive(
                             account, DataContract.CONTENT_AUTHORITY);
                     boolean syncPending = ContentResolver.isSyncPending(

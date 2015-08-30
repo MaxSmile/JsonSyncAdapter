@@ -23,6 +23,7 @@ public class MenuContent {
         addItem(new MenuItem("apps", "Apps"));
         addItem(new MenuItem("users", "Users"));
         addItem(new MenuItem("comments", "Comments"));
+        addItem(new MenuItem("feed", "Feed"));
     }
 
     private static void addItem(MenuItem item) {
