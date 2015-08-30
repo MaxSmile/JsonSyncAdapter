@@ -25,8 +25,10 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.model.AppObject;
+import com.vasilkoff.android.Sync.model.CommentObject;
 import com.vasilkoff.android.Sync.provider.DataContract;
+
+import java.net.CookieHandler;
 
 
 public class CommentsListFragment extends ListFragment
@@ -59,8 +61,8 @@ public class CommentsListFragment extends ListFragment
      * List of Cursor columns to read from when preparing an adapter to populate the ListView.
      */
     private static final String[] FROM_COLUMNS = new String[]{
-            AppObject.getProjection()[1],
-            AppObject.getProjection()[2]
+            CommentObject.getProjection()[0],
+            CommentObject.getProjection()[1]
     };
 
     /**
@@ -147,8 +149,8 @@ public class CommentsListFragment extends ListFragment
         // We only have one loader, so we can ignore the value of i.
         // (It'll be '0', as set in onCreate().)
         return new CursorLoader(getActivity(),  // Context
-                AppObject.getCONTENT_URI(), // URI
-                AppObject.getProjection(),    // Projection
+                CommentObject.getCONTENT_URI(), // URI
+                CommentObject.getProjection(),    // Projection
                 null,                           // Selection
                 null,                           // Selection args
                 null); // Sort

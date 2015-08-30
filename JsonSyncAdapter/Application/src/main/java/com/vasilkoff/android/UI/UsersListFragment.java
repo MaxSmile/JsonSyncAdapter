@@ -44,7 +44,6 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
-import com.vasilkoff.android.Sync.model.AppObject;
 import com.vasilkoff.android.Sync.model.UserObject;
 import com.vasilkoff.android.Sync.provider.DataProvider;
 import com.vasilkoff.android.Sync.provider.DataContract;
@@ -102,8 +101,8 @@ public class UsersListFragment extends ListFragment
      * List of Cursor columns to read from when preparing an adapter to populate the ListView.
      */
     private static final String[] FROM_COLUMNS = new String[]{
-            AppObject.getProjection()[1],
-            AppObject.getProjection()[2]
+            UserObject.getProjection()[1],
+            UserObject.getProjection()[2]
     };
 
     /**
