@@ -26,12 +26,6 @@ public class DataProvider extends ContentProvider {
      */
     private static final String AUTHORITY = DataContract.CONTENT_AUTHORITY;
 
-    // The constants below represent individual URI routes, as IDs. Every URI pattern recognized by
-    // this ContentProvider is defined using sUriMatcher.addURI(), and associated with one of these
-    // IDs.
-    //
-    // When a incoming URI is run through sUriMatcher, it will be tested against the defined
-    // URI patterns, and the corresponding route ID will be returned.
 
 
     public static final int ROUTE_VIDEOS = 1;
@@ -167,7 +161,7 @@ public class DataProvider extends ContentProvider {
                 return c;
             }
             case ROUTE_VIDEOS_COMPLEX: {
-                String query = "SELECT * FROM "+VideoObject.class.getSimpleName()+" v," +
+                String query = "SELECT "+projection+" FROM "+VideoObject.class.getSimpleName()+" v," +
                     AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id";
 
                 Cursor cursor = db.rawQuery(query, null);

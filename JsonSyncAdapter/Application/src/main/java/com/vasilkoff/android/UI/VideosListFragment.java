@@ -109,28 +109,6 @@ public class VideosListFragment extends ListFragment
 
         mAdapter = new VideoListAdapter(getContext(),R.layout.video_list_row,null,0);
 
-//        mAdapter = new SimpleCursorAdapter(
-//                getActivity(),       // Current context
-//                android.R.layout.simple_list_item_activated_2,  // Layout for individual rows
-//                null,                // Cursor
-//                FROM_COLUMNS,        // Cursor columns to use
-//                TO_FIELDS,           // Layout fields to use
-//                0                    // No flags
-//        );
-//
-//        mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-//            @Override
-//            public boolean setViewValue(View view, Cursor cursor, int i) {
-//                final int imageColumn = cursor.getColumnIndex("bitmap_preview");
-//                if (i == imageColumn) {
-//                    aq.id(R.id.imageView).image(cursor.getString(cursor.getColumnIndex("bitmap_preview")));
-//                    return true;
-//                } else {
-//                    // Let SimpleCursorAdapter handle other fields automatically
-//                    return false;
-//                }
-//            }
-//        });
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
         getLoaderManager().initLoader(0, null, this);

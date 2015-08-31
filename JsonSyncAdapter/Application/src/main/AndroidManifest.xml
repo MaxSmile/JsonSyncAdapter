@@ -56,13 +56,7 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <!--
-        This implements the account we'll use as an attachment point for our SyncAdapter. Since
-        our SyncAdapter doesn't need to authenticate the current user.
 
-        It's also possible to attach a SyncAdapter to an existing account provided by another
-        package. In that case, this element could be omitted here.
-        -->
         <service android:name=".Account.AccountService" >
 
             <!-- Required filter used by the system to launch our account service. -->
@@ -103,11 +97,11 @@
         </activity>
         <activity
             android:name=".UI.CommentsListActivity"
-            android:label="@string/Apps_title" >
+            android:label="@string/Comments_title" >
         </activity>
         <activity
             android:name=".UI.FeedListActivity"
-            android:label="@string/Apps_title" >
+            android:label="@string/Feed_title" >
         </activity>
 
 

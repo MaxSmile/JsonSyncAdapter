@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/color_set_1_accent"
+    >
+
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/white"/>
+            <size
+                android:width="34dp"
+                android:height="34dp"/>
+        </shape>
+
+    </item>
+
+    <!-- Smaller circle in front -->
+    <item>
+        <bitmap android:src="@drawable/first_dark_blue"/>
+        <size
+            android:width="10dp"
+            android:height="10dp"/>
+    </item>
+</ripple>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="red">#FF0000</color>
+    <color name="green">#99CC00</color>
+    <color name="bubble_green">#6CB432</color>
+    <color name="darkGreen">#77AA00</color>
+    <color name="blue">#2196F3</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="dark">#333333</color>
+    <color name="nav_color">#673AB7</color>
+    <color name="bottom_color">#273238</color>
+    <color name="name_color">#505050</color>
+    <color name="normal_text_color">#676767</color>
+    <color name="comment_name_color">#47078d</color>
+    <color name="status_bar_color">#6A1EA5</color>
+    <color name="line_color">#a498b4</color>
+    <color name="white_gray">#d5d5d5</color>
+    <color name="light_gray">#EFEFEF</color>
+    <color name="new_gray">#A8A8A8</color>
+    <color name="tab_color">#263238</color>
+    <color name="yellow_royal">#ffc926</color>
+    <color name="transparent">#000000ff</color>
+    <color name="halftransparent">#770f0f0f</color>
+    <color name="color_set_1_accent">#ffc926</color>
+    <color name="yellow_royal_dark">#eeb506</color>
+    <color name="red_royal">#C8312F</color>
+    <color name="official_red">#e53935</color><!--#E74C3C</color>-->
+    <color name="royal_green">#4CAF4F</color>
+    <color name="royal_dark_green">#3D8E3F</color>
+    <color name="dark_gray">#676767</color>
+
+    <color name="light_blue">#00bcd4</color>
+    <color name="dark_blue">#009eb2</color>
+    <color name="share_blue">#6DAAE1</color>
+
+
+    <color name="marine">#328C9A</color>
+
+    <color name="royal_blue">#3CCBE0</color> <!--#4dd0e1</color>-->
+    <color name="royal_dark_blue">#2CBCD4</color> <!--#3CCBE0</color>-->
+    <color name="royal_blue_green">#3CBECF</color>
+    <color name="royal_text_dark_blue">#0278BD</color>
+    <color name="royal_light_green">#6FD4B0</color>
+    <color name="username_default_color">#1C4687</color>
+
+    <color name="default_pink">#FF0061</color>
+    <color name="dark_marine">#1A2327</color>
+
+    <color name="feed_background_gray">#C2C2C2</color>
+    <color name="dark_green">#13707C</color>
+    <color name="super_dark_blue">#1B252D</color>
+    <color name="facebook_dark_blue">#225776</color>
+</resources>

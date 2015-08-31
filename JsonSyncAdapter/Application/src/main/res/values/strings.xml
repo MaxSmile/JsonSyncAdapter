@@ -8,4 +8,7 @@
     <string name="Users_title">Users</string>
     <string name="Videos_title">Videos</string>
     <string name="Apps_title">Applications</string>
+    <string name="Comments_title">Comments</string>
+    <string name="Feed_title">Feed</string>
+
 </resources>

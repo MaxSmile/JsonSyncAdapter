@@ -23,11 +23,17 @@ public class FeedListAdapter extends ResourceCursorAdapter {
         final int colid = cursor.getColumnIndex("id");
         final int colauthor = cursor.getColumnIndex("author");
         final int colimage = cursor.getColumnIndex("bitmap_preview");
+        final int colapp_name = cursor.getColumnIndex("app_name");
+
         String uid = cursor.getString(colid);
         String author = cursor.getString(colauthor);
-        aq.id(R.id.textView1).text(uid);
-        aq.id(R.id.textView2).text(author);
+        String app_name = (colapp_name>=0)?cursor.getString(colapp_name):null;
+        aq.id(R.id.text_name).text(author);
+        aq.id(R.id.app_recorded_name).text(uid);
+        if (app_name!=null)
+            aq.id(R.id.first_comment).text(app_name);
 
-        aq.id(R.id.image).progress(R.id.progress).image(cursor.getString(colimage));
+        aq.id(R.id.volley_square_preview)//.progress(R.id.progress)
+                .image(cursor.getString(colimage));
     }
 }

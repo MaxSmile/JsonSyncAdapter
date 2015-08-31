@@ -41,7 +41,7 @@ public class VideoObject extends ModelObject {
     /**
      * Fully qualified URI for "entry" resources.
      */
-    public static final Uri getCONTENT_URI() {
+    public static Uri getCONTENT_URI() {
         return DataContract.BASE_CONTENT_URI.buildUpon().appendPath("videos").build();
     }
 

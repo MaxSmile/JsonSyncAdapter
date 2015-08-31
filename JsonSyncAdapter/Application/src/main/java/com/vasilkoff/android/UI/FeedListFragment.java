@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -56,8 +57,6 @@ public class FeedListFragment extends ListFragment
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // Create account, if needed
         SyncUtils.CreateSyncAccount(activity);
     }
 
@@ -65,7 +64,7 @@ public class FeedListFragment extends ListFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mAdapter = new FeedListAdapter(getContext(),R.layout.video_list_row,null,0);
+        mAdapter = new FeedListAdapter(getContext(),R.layout.feed_row,null,0);
 
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
@@ -94,12 +93,9 @@ public class FeedListFragment extends ListFragment
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(getActivity(),  // Context
-                FeedObject.getCONTENT_URI(), // URI
-                FeedObject.getProjection(),         // Projection
-                null,                           // Selection
-                null,                           // Selection args
-                ""); // Sort
+        Uri URI = FeedObject.getCONTENT_URI();
+        String[] Projection = FeedObject.getProjection();
+        return new CursorLoader(getActivity(),URI,Projection,null,null,null);
     }
 
 

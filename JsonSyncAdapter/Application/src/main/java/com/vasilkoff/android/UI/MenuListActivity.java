@@ -7,6 +7,7 @@ import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
 import com.vasilkoff.android.R;
+import com.vasilkoff.android.Sync.model.CommentObject;
 
 
 public class MenuListActivity extends Activity
@@ -57,12 +58,18 @@ public class MenuListActivity extends Activity
                     Intent detailIntent = new Intent(this, UsersListActivity.class);
                     startActivity(detailIntent);
                 } return;
-                default:
+                case "feed": {
+                    Intent detailIntent = new Intent(this, FeedListActivity.class);
+                    startActivity(detailIntent);
+                } return;
+                case "comments": {
                     Intent detailIntent = new Intent(this, CommentsListActivity.class);
                     startActivity(detailIntent);
+                } return;
+                default:
+                    Intent detailIntent = new Intent(this, FeedListActivity.class);
+                    startActivity(detailIntent);
             }
-
-
 
     }
 }
