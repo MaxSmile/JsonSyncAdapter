@@ -66,6 +66,7 @@ public class FeedListFragment extends ListFragment
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        /*
         super.onViewCreated(view, savedInstanceState);
         SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
         String query = "SELECT * FROM " +
@@ -74,8 +75,8 @@ public class FeedListFragment extends ListFragment
                 AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id AND u.id=v.author";
 
         Cursor cursor = db.rawQuery(query, null);
-
-        mAdapter = new FeedListAdapter(getContext(),R.layout.feed_row,cursor,0);
+//*/
+        mAdapter = new FeedListAdapter(getContext(),R.layout.feed_row,null,0);
 
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
