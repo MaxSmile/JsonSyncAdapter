@@ -33,8 +33,7 @@ public class AppsSyncHelper {
 
     public static void updateLocalAppData(Context context,
                                           JSONObject data,
-                                          final SyncResult syncResult,
-                                          ContentResolver mContentResolver
+                                          final SyncResult syncResult
                                    )
             throws JSONException,
             RemoteException,
@@ -130,8 +129,8 @@ public class AppsSyncHelper {
             syncResult.stats.numInserts++;
         }
         Log.i(TAG, "Merge solution ready. Applying batch update");
-        mContentResolver.applyBatch(DataContract.CONTENT_AUTHORITY, batch);
-        mContentResolver.notifyChange(
+        contentResolver.applyBatch(DataContract.CONTENT_AUTHORITY, batch);
+        contentResolver.notifyChange(
                 AppObject.getCONTENT_URI(), // URI where data was modified
                 null,                           // No local observer
                 false);                         // IMPORTANT: Do not sync to network
