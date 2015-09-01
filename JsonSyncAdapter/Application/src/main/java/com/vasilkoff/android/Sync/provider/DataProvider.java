@@ -161,8 +161,21 @@ public class DataProvider extends ContentProvider {
                 return c;
             }
             case ROUTE_VIDEOS_COMPLEX: {
-                String query = "SELECT "+projection+" FROM "+VideoObject.class.getSimpleName()+" v," +
-                    AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id";
+                /*
+                String parts = "";
+                String coma = "";
+                for (String item: projection) {
+                    if(item.equals("_id")) continue;
+                    if(item.equals("id")) continue;
+                    if(item.equals("created_at")) item="v.created_at";
+                    parts += coma + item;
+                    coma = ",";
+                }
+                //*/
+                String query = "SELECT * FROM " +
+                        VideoObject.class.getSimpleName()+" v," +
+                        UserObject.class.getSimpleName()+" u," +
+                        AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id AND u.id=v.author";
 
                 Cursor cursor = db.rawQuery(query, null);
                 return cursor;

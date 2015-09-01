@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.SyncStatusObserver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,9 +27,12 @@ import com.vasilkoff.android.Account.AccountService;
 import com.vasilkoff.android.R;
 import com.vasilkoff.android.Sync.SyncService;
 import com.vasilkoff.android.Sync.SyncUtils;
+import com.vasilkoff.android.Sync.model.AppObject;
 import com.vasilkoff.android.Sync.model.FeedObject;
+import com.vasilkoff.android.Sync.model.UserObject;
 import com.vasilkoff.android.Sync.model.VideoObject;
 import com.vasilkoff.android.Sync.provider.DataContract;
+import com.vasilkoff.android.Sync.provider.Database;
 
 
 public class FeedListFragment extends ListFragment
@@ -63,8 +67,15 @@ public class FeedListFragment extends ListFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        SQLiteDatabase db = new Database(getContext()).getReadableDatabase();
+        String query = "SELECT * FROM " +
+                VideoObject.class.getSimpleName()+" v," +
+                UserObject.class.getSimpleName()+" u," +
+                AppObject.class.getSimpleName() + " a WHERE v.recorded_app=a.id AND u.id=v.author";
 
-        mAdapter = new FeedListAdapter(getContext(),R.layout.feed_row,null,0);
+        Cursor cursor = db.rawQuery(query, null);
+
+        mAdapter = new FeedListAdapter(getContext(),R.layout.feed_row,cursor,0);
 
         setListAdapter(mAdapter);
         setEmptyText(getText(R.string.loading));
@@ -107,6 +118,7 @@ public class FeedListFragment extends ListFragment
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
         mAdapter.changeCursor(null);
     }
 

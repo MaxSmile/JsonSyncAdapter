@@ -56,10 +56,11 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(getSqlToCreateTable(VideoObject.class));
+
         db.execSQL(getSqlToCreateTable(AppObject.class));
         db.execSQL(getSqlToCreateTable(UserObject.class));
         db.execSQL(getSqlToCreateTable(CommentObject.class));
+        db.execSQL(getSqlToCreateTable(VideoObject.class));
     }
 
     @Override

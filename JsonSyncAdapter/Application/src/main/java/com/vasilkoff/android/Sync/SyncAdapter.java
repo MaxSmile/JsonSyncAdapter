@@ -282,8 +282,7 @@ class SyncAdapter extends AbstractThreadedSyncAdapter {
         final ContentResolver contentResolver = getContext().getContentResolver();
 
 
-        // TODO: have to fix this code after fix the URL
-        JSONArray entries = data.getJSONObject("user").getJSONArray("followers");
+        JSONArray entries = data.getJSONArray("user");
         Log.i(TAG, "Parsing complete. Found " + entries.length() + " entries");
 
 
