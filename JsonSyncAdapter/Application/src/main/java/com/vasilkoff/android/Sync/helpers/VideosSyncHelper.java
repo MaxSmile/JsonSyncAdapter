@@ -117,7 +117,7 @@ public class VideosSyncHelper {
         for (VideoObject e : entryMap.values()) {
             Log.i(TAG, "Scheduling insert: entry_id=" + e.id);
 
-            UsersSyncHelper.getUsersPage(e.author,syncResult);
+            new UsersSyncHelper().getUsersPage(context,e.author,syncResult);
 
 
             ContentProviderOperation.Builder b = ContentProviderOperation.newInsert(VideoObject.getCONTENT_URI());
